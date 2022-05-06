@@ -1,0 +1,15 @@
+[package]
+name = "meta-maxim/type"
+description = "Runtime type checking for Roblox Luau"
+version = "1.1.0"
+license = "MIT"
+authors = ["Maxim Borsch <@Meta_Maxim>"]
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+LuauTypeParser = "meta-maxim/luau-type-parser@^1"
+LuauTypes = "meta-maxim/luau-types@^1"
+RobloxDataTypeNames = "meta-maxim/data-type-names@^1"
+RobloxClassNames = "meta-maxim/class-names@^1"
+RobloxInstanceNames = "meta-maxim/instance-names@^1"
