@@ -22,7 +22,7 @@ Use it to check types and perform other type manipulations. Usage examples:
 ```lua
 local Type = require(script.Parent.Type)
 
--- Create a tuple type (using parser)
+-- Defines a custom tuple type
 local typeDefinition = "'string_literal' | true, Enum.NormalId, { x: number, y: number }?"
 local myType = Type.new(typeDefinition)
 
