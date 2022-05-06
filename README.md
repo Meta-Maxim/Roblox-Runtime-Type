@@ -9,6 +9,7 @@ Supported types:
   - Unions `(type | type) | type`
   - Optionals `type?`
   - Tuples `type, type, type`
+  - Primitive literals `"string_literal" | true`
 
 # Usage
 
