@@ -17,7 +17,7 @@ Add **Type** your Wally dependencies:
 Type = "meta-maxim/type@^1"
 ```
 
-Use **Type** to check to check types and perform other type manipulations. Usage examples:
+Use it to check types and perform other type manipulations. Usage examples:
 ```lua
 local Type = require(script.Parent.Type)
 
