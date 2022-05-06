@@ -22,14 +22,15 @@ Use it to check types and perform other type manipulations. Usage examples:
 local Type = require(script.Parent.Type)
 
 -- Create a tuple type (using parser)
-local typeDefinition = "string, number, { x: number, y: number }?"
+local typeDefinition = "'string_literal' | true, Enum.NormalId, { x: number, y: number }?"
 local myType = Type.new(typeDefinition)
+
+-- Check types
+print(myType:Is("string_literal", Enum.NormalId.Front, nil)) --> true
+print(myType:Is("string_literal", Enum.NormalId.Front, { x = 1 })) --> false
 
 -- Compare types
 print(myType == Type(typeDefinition)) --> true
-
--- Check types
-print(myType:Is("mystring", 123, nil) --> true
 
 local myItemTemplate = {
   Id = 1;
