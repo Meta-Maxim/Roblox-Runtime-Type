@@ -1,7 +1,7 @@
 # Roblox-Runtime-Type
-Runtime type parser and checker for roblox types.
+Runtime type parser and checker for roblox types that allows you to define types in the luau type format. You can check whether certain values match a given type, or perform other type-related operations.
 
-⚠️ Early version - May crash or error with invalid type definitions
+⚠️ Early version - Limited error handling
 
 Supported types:
   - All luau value types
