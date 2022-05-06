@@ -4,7 +4,7 @@ Runtime type parser and checker for roblox types.
 ⚠️ Early version - May crash or error with invalid type definitions
 
 Supported types:
-  - All luau types
+  - All luau value types
   - All roblox types (classes, instances, enums) (until updates)
   - Unions `(type | type) | type`
   - Optionals `type?`
@@ -69,3 +69,20 @@ myItemRemote.OnServerEvent:Connect(function (...)
   processItemRequest(...)
 end)
 ```
+
+# API
+  - `Type.new(...(string | Type))`
+    - `Type(...(string | Type))` *(equivalent)*
+  - `Type.Boolean`
+  - `Type.Number`
+  - `Type.String`
+  - `Type.Thread`
+  - `Type.Function`
+  - `Type.Table.new(maps: {Map}, fields: {Field})`
+  - `Type.Field.new(key: Type, valueType: Type)`
+  - `Type.Map.new(keyType: Type, valueType: Type)`
+  - `Type.Union.new(...Type)`
+  - `Type.Optional.new(value: Type)`
+  - `Type.Enum.new(enum: Enum)`
+  - `Type.Instance.new(className: string)`
+  - `Type.Class.new(className: string)`
