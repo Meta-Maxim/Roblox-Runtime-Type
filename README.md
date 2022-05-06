@@ -11,6 +11,13 @@ Supported types:
   - Tuples `type, type, type`
   - Primitive literals `"string_literal" | true`
 
+As this is a runtime type checking library, the type definition language differs from luau type definitions:
+  - No intersection types
+  - No generic types
+  - No specific function types (only `function`)
+  - Tuples can be treated as a value where appropriate
+    - `(number, string) | (number, string)`
+
 # Usage
 
 Add **Type** your Wally dependencies:
@@ -85,6 +92,7 @@ end)
   - `Type.Map.new(keyType: Type, valueType: Type)`
   - `Type.Union.new(...Type)`
   - `Type.Optional.new(value: Type)`
+  - `Type.DataType.new(valueType: string)`
   - `Type.Enum.new(enum: Enum)`
   - `Type.Instance.new(className: string)`
   - `Type.Class.new(className: string)`
