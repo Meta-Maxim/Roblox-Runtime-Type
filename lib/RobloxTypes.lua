@@ -109,7 +109,12 @@ function EnumType.new(enum: Enum): EnumType
 end
 
 function EnumType:Is(value: any): boolean
-	return value == self.Enum
+	for _, enumItem in pairs(self.Enum:GetEnumItems()) do
+		if value == enumItem then
+			return true
+		end
+	end
+	return false
 end
 
 function EnumType:__eq(other: any): boolean
@@ -134,8 +139,8 @@ function RobloxTypes.ParseString(literal: string)
 		return ClassType.new(literal)
 	end
 
-	for _, enumName in ipairs(ROBLOX_ENUMS) do
-		if enumName == literal then
+	for _, enum in ipairs(ROBLOX_ENUMS) do
+		if "Enum." .. tostring(enum) == literal then
 			return EnumType.new(enum)
 		end
 	end

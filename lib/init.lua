@@ -11,6 +11,10 @@ function Type:__index(key): LuauTypes.Type
 	if typeKey then
 		return typeKey
 	end
+	local robloxType = RobloxTypes[key]
+	if robloxType then
+		return robloxType
+	end
 	return LuauTypes[key]
 end
 
@@ -25,7 +29,7 @@ function Type.new(...): LuauTypes.Type
 			return parser
 		end
 		parser = LuauTypeParser.new({
-			CustomLiteralParsers = { RobloxTypes.ParseString },
+			CustomTypeParsers = { RobloxTypes.ParseString },
 		})
 		return parser
 	end
@@ -42,7 +46,7 @@ function Type.new(...): LuauTypes.Type
 
 	local tuple = LuauTypes.Tuple.new()
 	for _, arg in ipairs(input) do
-		tuple:AddValueType(LuauTypes.new(type(arg) == "string" and getLuauParser():Parse(arg) or arg))
+		tuple:AddValueType(LuauTypes.new(if type(arg) == "string" then getLuauParser():Parse(arg) else arg))
 	end
 
 	return tuple
@@ -53,15 +57,11 @@ local function typeOfRecursive(value: any): LuauTypes.Type
 	if valueType == "table" then
 		local tableType = LuauTypes.Table.new()
 		for key, val in pairs(value) do
-			tableType:AddField(LuauTypes.Field.new(key, typeOfRecursive(val)))
+			tableType:AddFieldType(LuauTypes.Field.new(key, typeOfRecursive(val)))
 		end
 		return tableType
-	elseif valueType == "string" then
-		return LuauTypes.String
-	elseif valueType == "number" then
-		return LuauTypes.Number
-	elseif valueType == "boolean" then
-		return LuauTypes.Boolean
+	elseif LuauTypes.Globals[valueType] then
+		return LuauTypes.Globals[valueType]
 	elseif valueType == "Instance" then
 		return RobloxTypes.Instance.new(value.ClassName)
 	elseif valueType == "EnumItem" then
