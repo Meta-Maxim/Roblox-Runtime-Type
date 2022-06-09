@@ -43,10 +43,14 @@ function DataType:Is(value: any): boolean
 end
 
 function DataType:__eq(other: any): boolean
-	if getmetatable(other) ~= DataType then
+	if type(other) ~= "table" or getmetatable(other) ~= DataType then
 		return false
 	end
 	return self.Name == other.Name
+end
+
+function DataType:__tostring(): string
+	return self.Name
 end
 
 RobloxTypes.DataType = DataType
@@ -66,10 +70,14 @@ function InstanceType:Is(value: any): boolean
 end
 
 function InstanceType:__eq(other: any): boolean
-	if getmetatable(other) ~= InstanceType then
+	if type(other) ~= "table" or getmetatable(other) ~= InstanceType then
 		return false
 	end
 	return self.ClassName == other.ClassName
+end
+
+function InstanceType:__tostring(): string
+	return self.ClassName
 end
 
 RobloxTypes.Instance = InstanceType
@@ -90,10 +98,14 @@ function ClassType:Is(value: any): boolean
 end
 
 function ClassType:__eq(other: any): boolean
-	if getmetatable(other) ~= ClassType then
+	if type(other) ~= "table" or getmetatable(other) ~= ClassType then
 		return false
 	end
 	return self.ClassName == other.ClassName
+end
+
+function ClassType:__tostring(): string
+	return self.ClassName
 end
 
 RobloxTypes.Class = ClassType
@@ -118,10 +130,14 @@ function EnumType:Is(value: any): boolean
 end
 
 function EnumType:__eq(other: any): boolean
-	if getmetatable(other) ~= EnumType then
+	if type(other) ~= "table" or getmetatable(other) ~= EnumType then
 		return false
 	end
 	return self.Enum == other.Enum
+end
+
+function EnumType:__tostring(): string
+	return tostring(self.Enum)
 end
 
 RobloxTypes.Enum = EnumType

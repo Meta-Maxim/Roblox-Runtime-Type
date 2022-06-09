@@ -6,30 +6,33 @@ local RobloxTypes = require(script.RobloxTypes)
 
 local Type = {}
 
-function Type:__index(key): LuauTypes.Type
-	local typeKey = rawget(Type, key)
-	if typeKey then
-		return typeKey
-	end
-	local robloxType = RobloxTypes[key]
-	if robloxType then
-		return robloxType
-	end
-	return LuauTypes[key]
+export type ParserOptions = {
+	CustomTypeParsers: { (string) -> LuauTypes.Type? }?,
+}
+
+local RobloxTypeParser = {}
+RobloxTypeParser.__index = RobloxTypeParser
+
+function RobloxTypeParser.new(parserOptions: ParserOptions?)
+	local customTypeParsers = parserOptions and parserOptions.CustomTypeParsers or {}
+	customTypeParsers[#customTypeParsers + 1] = RobloxTypes.ParseString
+	return setmetatable({
+		CustomTypeParsers = customTypeParsers,
+	}, RobloxTypeParser)
 end
 
-function Type:__call(...): LuauTypes.Type
-	return Type.new(...)
+function RobloxTypeParser:__call(...): LuauTypes.Type
+	return self:parse(...)
 end
 
-function Type.new(...): LuauTypes.Type
+function RobloxTypeParser:parse(...): LuauTypes.Type
 	local parser
 	local function getLuauParser()
 		if parser then
 			return parser
 		end
 		parser = LuauTypeParser.new({
-			CustomTypeParsers = { RobloxTypes.ParseString },
+			CustomTypeParsers = self.CustomTypeParsers,
 		})
 		return parser
 	end
@@ -50,6 +53,30 @@ function Type.new(...): LuauTypes.Type
 	end
 
 	return tuple
+end
+
+function Type:__index(key): LuauTypes.Type
+	local typeKey = rawget(Type, key)
+	if typeKey then
+		return typeKey
+	end
+	local robloxType = RobloxTypes[key]
+	if robloxType then
+		return robloxType
+	end
+	return LuauTypes[key]
+end
+
+function Type:__call(...): LuauTypes.Type
+	return Type.new(...)
+end
+
+function Type.new(...): LuauTypes.Type
+	return RobloxTypeParser.new():parse(...)
+end
+
+function Type.custom(parserOptions: ParserOptions): LuauTypes.Type
+	return RobloxTypeParser.new(parserOptions)
 end
 
 local function typeOfRecursive(value: any): LuauTypes.Type
