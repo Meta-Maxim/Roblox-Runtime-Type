@@ -82,6 +82,7 @@ end)
 # API
   - `Type.new(...(string | Type))`
     - `Type(...(string | Type))` *(equivalent)*
+  - `Type.Nil`
   - `Type.Boolean`
   - `Type.Number`
   - `Type.String`
