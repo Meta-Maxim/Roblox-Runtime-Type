@@ -20,7 +20,7 @@ As this is a runtime type checking library, the type definition language differs
 
 # Usage
 
-Add **Type** your Wally dependencies:
+Add **Type** to your Wally dependencies:
 ```toml
 Type = "meta-maxim/type@^1"
 ```
