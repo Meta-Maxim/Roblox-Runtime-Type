@@ -8,6 +8,8 @@ export type TypeId = "DataType" | "Class" | "Instance" | "Enum"
 
 export type Type = {
 	Is: (...any) -> boolean,
+	IsTypeOf: (Type) -> boolean,
+	IsSubtype: (Type) -> boolean,
 	Type: TypeId,
 }
 
