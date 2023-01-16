@@ -1,22 +1,21 @@
 # Roblox-Runtime-Type
 Runtime type parser and checker for roblox types that allows you to define types in the luau type format. You can check whether certain values match a given type, or perform other type-related operations.
 
-⚠️ Early version - Limited error handling
-
 Supported types:
   - All luau value types
-  - All roblox types (classes, instances, enums) (until updates)
+  - All roblox types (classes, instances, enums) 
+    - (Depends on updated dependencies: RobloxDataTypeNames, RobloxInstanceNames, RobloxClassNames)
   - Unions `(type | type) | type`
   - Optionals `type?`
   - Tuples `type, type, type`
-  - Primitive literals `"string_literal" | true`
+  - Primitive literals `"Square" | "Circle" | true`
 
-As this is a runtime type checking library, the type definition language differs from luau type definitions:
+Differences from luau type definitions:
   - No intersection types
   - No generic types
   - No specific function types (only `function`)
   - Tuples can be treated as a value where appropriate
-    - `(number, string) | (number, string)`
+    - `(number, Vector2) | (Vector2, Vector3)`
 
 # Usage
 
@@ -30,15 +29,14 @@ Use it to check types and perform other type manipulations. Usage examples:
 local Type = require(script.Parent.Type)
 
 -- Defines a custom tuple type
-local typeDefinition = "'string_literal' | true, Enum.NormalId, { x: number, y: number }?"
-local myType = Type.new(typeDefinition)
+local myType = Type("Enum.NormalId, { x: number, y: number }?")
 
 -- Check types
-print(myType:Is("string_literal", Enum.NormalId.Front, nil)) --> true
-print(myType:Is("string_literal", Enum.NormalId.Front, { x = 1 })) --> false
+print(myType:Is(Enum.NormalId.Front, nil)) --> true
+print(myType:Is(Enum.NormalId.Front, { x = 1 })) --> false
 
 -- Compare types
-print(myType == Type(typeDefinition)) --> true
+print(myType == Type("Enum.NormalId", "{ x: number, y: number }?")) --> true
 
 local myItemTemplate = {
   Id = 1;
@@ -57,7 +55,7 @@ print(Type.of(myItemTemplate) == myItemType) --> true
 print(Type.Union.new(Type.Number, Type.String) == Type("number | string")) --> true
 ```
 
-Remote value type checking example (without global networking middleware):
+Remote value type checking example:
 ```lua
 local Type = require(script.Parent.Type)
 
@@ -80,8 +78,17 @@ end)
 ```
 
 # API
+**Type construction**
   - `Type.new(...(string | Type))`
     - `Type(...(string | Type))` *(equivalent)*
+
+**Type object API:**
+  - `Type:Is(...any)` -- returns true if the given values match this type
+  - `Type:IsTypeOf(otherType)` -- returns true if this type is a subtype of otherType
+  - `Type:IsSubtype(otherType)` -- returns true if otherType is a subtype of this type
+  - `Type == otherType` -- returns true if the two types have identical definitions
+
+**Types:**
   - `Type.Nil`
   - `Type.Boolean`
   - `Type.Number`
