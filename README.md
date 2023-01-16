@@ -4,7 +4,7 @@ Runtime type parser and checker for roblox types that allows you to define types
 Supported types:
   - All luau value types
   - All roblox types (classes, instances, enums) 
-    - (Depends on updated dependencies: RobloxDataTypeNames, RobloxInstanceNames, RobloxClassNames)
+    - *(Depends on updated dependencies:* `RobloxDataTypeNames`, `RobloxInstanceNames`, `RobloxClassNames`)
   - Unions `(type | type) | type`
   - Optionals `type?`
   - Tuples `type, type, type`
