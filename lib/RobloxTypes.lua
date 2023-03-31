@@ -46,6 +46,9 @@ function DataType:Is(value: any): boolean
 end
 
 function DataType:IsSubtype(other: Type): boolean
+	if other.Type == "Any" then
+		return true
+	end
 	if other.Type == "DataType" then
 		return self.Name == other.Name
 	end
@@ -84,6 +87,9 @@ function InstanceType:Is(value: any): boolean
 end
 
 function InstanceType:IsSubtype(other: Type): boolean
+	if other.Type == "Any" then
+		return true
+	end
 	if other.Type == "Instance" then
 		if self.ClassName == other.ClassName then
 			return true
@@ -135,6 +141,9 @@ function ClassType:Is(value: any): boolean
 end
 
 function ClassType:IsSubtype(other: Type): boolean
+	if other.Type == "Any" then
+		return true
+	end
 	if other.Type == "Class" then
 		if self.ClassName == other.ClassName then
 			return true
@@ -189,6 +198,9 @@ function EnumType:Is(value: any): boolean
 end
 
 function EnumType:IsSubtype(other: Type): boolean
+	if other.Type == "Any" then
+		return true
+	end
 	if other.Type == "Literal" then
 		return self:Is(other.Value)
 	end
