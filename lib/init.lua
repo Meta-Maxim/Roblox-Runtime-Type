@@ -49,7 +49,7 @@ function RobloxTypeParser:parse(...): LuauTypes.Type
 
 	local tuple = LuauTypes.Tuple.new()
 	for _, arg in ipairs(input) do
-		tuple:AddValueType(LuauTypes.new(if type(arg) == "string" then getLuauParser():Parse(arg) else arg))
+		tuple:AddValueType(if type(arg) == "string" then getLuauParser():Parse(arg) else arg)
 	end
 
 	return tuple

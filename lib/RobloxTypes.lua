@@ -207,43 +207,55 @@ function EnumType:__eq(other: any): boolean
 end
 
 function EnumType:__tostring(): string
-	return tostring(self.Enum)
+	return "Enum." .. tostring(self.Enum)
 end
 
 RobloxTypes.Enum = EnumType
 
-function RobloxTypes.ParseString(literal: string)
-	if table.find(ROBLOX_DATA_TYPES, literal) then
-		return DataType.new(literal)
-	end
+function RobloxTypes.ParseString(symbol: string)
+	if string.sub(symbol, 1, 5) == "Enum." then
+		for _, enum in ROBLOX_ENUMS do
+			if "Enum." .. tostring(enum) == symbol then
+				return EnumType.new(enum)
+			end
+		end
 
-	if table.find(ROBLOX_INSTANCES, literal) then
-		return InstanceType.new(literal)
-	end
+		-- if the type is an enum item, returns it as an exact value type
 
-	if table.find(ROBLOX_CLASSES, literal) then
-		return ClassType.new(literal)
-	end
-
-	for _, enum in ROBLOX_ENUMS do
-		if "Enum." .. tostring(enum) == literal then
-			return EnumType.new(enum)
+		-- removes "Enum." from the start of the string
+		local enumId = string.sub(symbol, 6)
+		-- finds the first "." in the string, which separates the enum type from the enum item
+		local enumTypeSeparator = string.find(enumId, ".", 1, true)
+		if enumTypeSeparator then
+			-- removes the enum type from the string
+			local enumName = string.sub(enumId, 1, enumTypeSeparator - 1)
+			local enum = pcall(function()
+				return Enum[enumName]
+			end)
+			if not enum then
+				return nil
+			end
+			local enumItemName = string.sub(enumId, enumTypeSeparator + 1)
+			local enumValue = pcall(function()
+				return enum[enumItemName]
+			end)
+			if not enumValue then
+				return nil
+			end
+			return LuauTypes.Literal.new(enumValue)
 		end
 	end
 
-	if string.sub(literal, 1, 5) == "Enum." then
-		local enumName = string.sub(literal, 6)
-		enumName = string.sub(enumName, 1, string.find(enumName, ".", 1, true) - 1)
-		local enumItemName = string.sub(literal, string.find(literal, ".", 6, true) + 1)
-		local enum = Enum[enumName]
-		if not enum then
-			return nil
-		end
-		local enumValue = Enum[enumName][enumItemName]
-		if not enumValue then
-			return nil
-		end
-		return LuauTypes.Literal.new(enumValue)
+	if table.find(ROBLOX_INSTANCES, symbol) then
+		return InstanceType.new(symbol)
+	end
+
+	if table.find(ROBLOX_CLASSES, symbol) then
+		return ClassType.new(symbol)
+	end
+
+	if table.find(ROBLOX_DATA_TYPES, symbol) then
+		return DataType.new(symbol)
 	end
 end
 
