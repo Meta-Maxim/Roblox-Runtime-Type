@@ -46,6 +46,17 @@ function DataType:Is(value: any): boolean
 end
 
 function DataType:IsSubtype(other: Type): boolean
+	if other.Type == "DataType" then
+		return self.Name == other.Name
+	end
+	return false
+end
+
+function DataType:IsTypeOf(other: Type): boolean
+	return other:IsSubtype(self)
+end
+
+function DataType:CanBeSubtype(other: Type): boolean
 	if other.Type == "Any" then
 		return true
 	end
@@ -55,8 +66,8 @@ function DataType:IsSubtype(other: Type): boolean
 	return false
 end
 
-function DataType:IsTypeOf(other: Type): boolean
-	return other:IsSubtype(self)
+function DataType:CanBeTypeOf(other: Type): boolean
+	return other:CanBeSubtype(self)
 end
 
 function DataType:__eq(other: any): boolean
@@ -87,6 +98,29 @@ function InstanceType:Is(value: any): boolean
 end
 
 function InstanceType:IsSubtype(other: Type): boolean
+	if other.Type == "Instance" then
+		if self.ClassName == other.ClassName then
+			return true
+		end
+	end
+	if other.Type ~= "Class" and other.Type ~= "Instance" then
+		return false
+	end
+	local instance: Instance?
+	pcall(function()
+		instance = Instance.new(other.ClassName)
+	end)
+	if instance then
+		return instance:IsA(self.ClassName)
+	end
+	return false
+end
+
+function InstanceType:IsTypeOf(other: Type): boolean
+	return other:IsSubtype(self)
+end
+
+function InstanceType:CanBeSubtype(other: Type): boolean
 	if other.Type == "Any" then
 		return true
 	end
@@ -108,8 +142,8 @@ function InstanceType:IsSubtype(other: Type): boolean
 	return false
 end
 
-function InstanceType:IsTypeOf(other: Type): boolean
-	return other:IsSubtype(self)
+function InstanceType:CanBeTypeOf(other: Type): boolean
+	return other:CanBeSubtype(self)
 end
 
 function InstanceType:__eq(other: any): boolean
@@ -141,6 +175,28 @@ function ClassType:Is(value: any): boolean
 end
 
 function ClassType:IsSubtype(other: Type): boolean
+	if other.Type == "Class" then
+		if self.ClassName == other.ClassName then
+			return true
+		end
+	end
+	if other.Type == "Instance" then
+		local instance: Instance?
+		pcall(function()
+			instance = Instance.new(other.ClassName)
+		end)
+		if instance then
+			return instance:IsA(self.ClassName)
+		end
+	end
+	return false
+end
+
+function ClassType:IsTypeOf(other: Type): boolean
+	return other:IsSubtype(self)
+end
+
+function ClassType:CanBeSubtype(other: Type): boolean
 	if other.Type == "Any" then
 		return true
 	end
@@ -161,8 +217,8 @@ function ClassType:IsSubtype(other: Type): boolean
 	return false
 end
 
-function ClassType:IsTypeOf(other: Type): boolean
-	return other:IsSubtype(self)
+function ClassType:CanBeTypeOf(other: Type): boolean
+	return other:CanBeSubtype(self)
 end
 
 function ClassType:__eq(other: any): boolean
@@ -198,6 +254,17 @@ function EnumType:Is(value: any): boolean
 end
 
 function EnumType:IsSubtype(other: Type): boolean
+	if other.Type == "Literal" then
+		return self:Is(other.Value)
+	end
+	return other.Type == "Enum" and self.Enum == other.Enum
+end
+
+function EnumType:IsTypeOf(other: Type): boolean
+	return other:IsSubtype(self)
+end
+
+function EnumType:CanBeSubtype(other: Type): boolean
 	if other.Type == "Any" then
 		return true
 	end
@@ -207,8 +274,8 @@ function EnumType:IsSubtype(other: Type): boolean
 	return other.Type == "Enum" and self.Enum == other.Enum
 end
 
-function EnumType:IsTypeOf(other: Type): boolean
-	return other:IsSubtype(self)
+function EnumType:CanBeTypeOf(other: Type): boolean
+	return other:CanBeSubtype(self)
 end
 
 function EnumType:__eq(other: any): boolean
