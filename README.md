@@ -19,7 +19,7 @@ Differences from luau type definitions:
 
 # Usage
 
-Add **Type** to your Wally dependencies:
+Add **Type** to your [Wally](https://wally.run/) dependencies:
 ```toml
 Type = "meta-maxim/type@^1"
 ```
@@ -67,7 +67,7 @@ local myItemType = Type [[{
 
 local function processItemRequest(itemId: number, item: {}?) end
 
-local itemRequestType = Type("number", Type.Optional(myItemType))
+local itemRequestType = Type(`number, {myItemType}?`)
 myItemRemote.OnServerEvent:Connect(function (...)
   if not itemRequestType:Is(...) then
     warn("Invalid input from client")
