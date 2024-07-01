@@ -92,6 +92,14 @@ local function typeOfRecursive(value: any, customTypeParsers: { Type: string, Is
 	if valueType == "table" then
 		local tableType = LuauTypes.Table.new()
 		for key, val in pairs(value) do
+			if customTypeParsers then
+				for _, customTypeParser in ipairs(customTypeParsers) do
+					if customTypeParser.Is(key) then
+						key = customTypeParser.Type
+						break
+					end
+				end
+			end
 			tableType:AddFieldType(LuauTypes.Field.new(key, typeOfRecursive(val)))
 		end
 		return tableType
