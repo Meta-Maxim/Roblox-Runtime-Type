@@ -79,7 +79,15 @@ function Type.custom(parserOptions: ParserOptions): LuauTypes.Type
 	return RobloxTypeParser.new(parserOptions)
 end
 
-local function typeOfRecursive(value: any): LuauTypes.Type
+local function typeOfRecursive(value: any, customTypeParsers: { Type: string, Is: (any) -> boolean }?): LuauTypes.Type
+	if customTypeParsers then
+		for _, customTypeParser in ipairs(customTypeParsers) do
+			if customTypeParser.Is(value) then
+				return customTypeParser.Type
+			end
+		end
+	end
+
 	local valueType = typeof(value)
 	if valueType == "table" then
 		local tableType = LuauTypes.Table.new()
@@ -109,6 +117,20 @@ function Type.of(...): LuauTypes.Type
 	local tuple = LuauTypes.Tuple.new()
 	for _, arg in ipairs(input) do
 		tuple:AddValueType(typeOfRecursive(arg))
+	end
+
+	return tuple
+end
+
+function Type.ofCustom(customTypeParsers: { Type: string, Is: (any) -> boolean }, ...): LuauTypes.Type
+	local input = { ... }
+	if #input == 1 then
+		return typeOfRecursive(input[1], customTypeParsers)
+	end
+
+	local tuple = LuauTypes.Tuple.new()
+	for _, arg in ipairs(input) do
+		tuple:AddValueType(typeOfRecursive(arg, customTypeParsers))
 	end
 
 	return tuple
