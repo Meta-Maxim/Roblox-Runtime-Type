@@ -4,6 +4,8 @@ local LuauTypeParser = require(script.Parent.LuauTypeParser)
 local LuauTypes = require(script.Parent.LuauTypes)
 local RobloxTypes = require(script.RobloxTypes)
 
+local NIL = newproxy()
+
 local Type = {}
 
 export type ParserOptions = {
@@ -91,7 +93,15 @@ local function typeOfRecursive(value: any, customTypeParsers: { Type: string, Is
 	local valueType = typeof(value)
 	if valueType == "table" then
 		local tableType = LuauTypes.Table.new()
+		local indices = {}
+		for i = 1, #value do
+			indices[i] = true
+			tableType:AddFieldType(LuauTypes.Field.new(i, typeOfRecursive(value[i])))
+		end
 		for key, val in pairs(value) do
+			if indices[key] then
+				continue
+			end
 			if customTypeParsers then
 				for _, customTypeParser in ipairs(customTypeParsers) do
 					if customTypeParser.Is(key) then
@@ -123,8 +133,8 @@ function Type.of(...): LuauTypes.Type
 	end
 
 	local tuple = LuauTypes.Tuple.new()
-	for _, arg in ipairs(input) do
-		tuple:AddValueType(typeOfRecursive(arg))
+	for i = 1, #input do
+		tuple:AddValueType(typeOfRecursive(input[i]))
 	end
 
 	return tuple
@@ -137,8 +147,8 @@ function Type.ofCustom(customTypeParsers: { Type: string, Is: (any) -> boolean }
 	end
 
 	local tuple = LuauTypes.Tuple.new()
-	for _, arg in ipairs(input) do
-		tuple:AddValueType(typeOfRecursive(arg, customTypeParsers))
+	for i = 1, #input do
+		tuple:AddValueType(typeOfRecursive(input[i], customTypeParsers))
 	end
 
 	return tuple
